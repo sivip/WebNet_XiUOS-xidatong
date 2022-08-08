@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="xidatong webnet" />
+    <meta name="author" content="gong" />
+    <!-- <link rel="icon" href="../../favicon.ico" /> -->
+
+    <title>xidatong web server set page</title>
+
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+      integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Bootstrap core CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+      integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+      crossorigin="anonymous"
+    />
+
+    <!-- Custom styles for this template -->
+    <link href="./css/layout.css" rel="stylesheet" />
+
+    <style>
+      .mt_15 {
+        margin-top: 15vh;
+      }
+      .mt_30 {
+        margin-top: 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar"
+            aria-expanded="false"
+            aria-controls="navbar"
+          >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <img src="./logo/logo.png" height="50px" />
+        </div>
+        <!-- <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">账号</a></li>
+          </ul>
+        </div> -->
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li>
+              <a href="deviceinfo.asp">系统设置</a>
+            </li>
+            <li class="active"><a href="tcp.html">网络设置</a></li>
+            <li><a href="chart.html">数据显示</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">网络设置</h1>
+          <ul class="nav nav-tabs card-header-tabs">
+            <li role="presentation">
+              <a href="tcp.html">TCP/IP</a>
+            </li>
+            <li role="presentation">
+              <a href="mqtt.html">Mqtt云平台设置</a>
+            </li>
+            <li role="presentation" class="active">
+              <a href="privateProtocol.html">私有协议</a>
+            </li>
+          </ul>
+          <div class="col-sm-8 col-sm-offset-3 mt_15">
+            <form>
+              <div class="form-group row">
+                <label for="server_addr" class="col-sm-3 col-xs-3 text-left"
+                  >服务器地址</label
+                >
+                <div class="col-sm-4">
+                  <input class="form-control" id="server_addr" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="server_port" class="col-sm-3 col-xs-3 text-left"
+                  >端口号</label
+                >
+                <div class="col-sm-4">
+                  <input class="form-control" id="server_port" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="username" class="col-sm-3 col-xs-3 text-left"
+                  >用户名</label
+                >
+                <div class="col-sm-4">
+                  <input class="form-control" id="username" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="passward" class="col-sm-3 col-xs-3 text-left"
+                  >密码</label
+                >
+                <div class="col-sm-4">
+                  <input type="password" class="form-control" id="passward" />
+                </div>
+              </div>
+              <a
+                type="submit"
+                onclick="savePrivateProtocol()"
+                class="col-sm-4 col-sm-offset-3 btn btn-primary mt_30"
+                >保存</a
+              >
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var serverAddr = $('#server_addr');
+    var serverPort = $('#server_port');
+    var userName = $('#username');
+    var passWard = $('#passward');
+
+    function validateIP(str) {
+      var pattern =
+        /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g;
+      return pattern.test(str);
+    }
+
+    function getPrivateProtocol() {
+      $.get(
+        '/cgi-bin/private_prt_get',
+        function (data) {
+          const { server_addr, server_port, username, passward } = data;
+          serverAddr.val(server_addr);
+          serverPort.val(server_port);
+          userName.val(username);
+          passWard.val(passward);
+        },
+        'json'
+      );
+    }
+
+    function savePrivateProtocol() {
+      let valid = validateIP(serverAddr.val());
+      if (valid) {
+        serverAddr.parent('div').removeClass('has-error');
+        $.post(
+          '/cgi-bin/private_prt_save',
+          {
+            server_addr: serverAddr.val(),
+            server_port: serverPort.val(),
+            username: userName.val(),
+            passward: passWard.val(),
+          },
+          function (data) {
+            alert('保存成功');
+          }
+        );
+      } else {
+        serverAddr.parent('div').addClass('has-error');
+        alert('服务器地址有误');
+      }
+    }
+    $(function () {
+      getPrivateProtocol();
+    });
+  </script>
+</html>

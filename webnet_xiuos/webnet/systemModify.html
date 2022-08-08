@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="xidatong webnet" />
+    <meta name="author" content="gong" />
+    <!-- <link rel="icon" href="../../favicon.ico" /> -->
+
+    <title>xidatong web server set page</title>
+
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="./css/layout.css" rel="stylesheet" />
+
+    <style>
+      .mt_15 {
+        margin-top: 15vh;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar"
+            aria-expanded="false"
+            aria-controls="navbar"
+          >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <img src="./logo/logo.png" height="50px" />
+        </div>
+        <!-- <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">账号</a></li>
+          </ul>
+        </div> -->
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active">
+              <a href="deviceinfo.asp">系统设置</a>
+            </li>
+            <li><a href="tcp.html">网络设置</a></li>
+            <li><a href="chart.html">数据显示</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">系统设置</h1>
+          <ul class="nav nav-tabs card-header-tabs">
+            <li role="presentation">
+              <a href="deviceinfo.asp">系统信息</a>
+            </li>
+            <li role="presentation" class="active">
+              <a href="systemModify.html">系统维护</a>
+            </li>
+          </ul>
+          <div class="col-sm-8 col-sm-offset-3 mt_15">
+            <form
+              name="upload"
+              method="POST"
+              enctype="multipart/form-data"
+              action="/upload"
+              target="stop"
+            >
+              <div class="form-group row">
+                <a href="#" onclick="restart()" class="col-sm-2 btn btn-default"
+                  >重启</a
+                >
+                <span class="col-sm-offset-1">重新启动设备</span>
+              </div>
+              <div class="form-group row">
+                <a onclick="recovery()" class="col-sm-2 btn btn-default"
+                  >简单恢复</a
+                >
+                <span class="col-sm-offset-1">简单恢复设备参数</span>
+              </div>
+              <div class="form-group row form-inline">
+                <input
+                  type="file"
+                  name="file1"
+                  id="inputFile"
+                  style="display: inline-block"
+                />
+                <input
+                  type="submit"
+                  name="submit"
+                  class="col-sm-offset-1 btn btn-primary"
+                  ></input
+                >
+              </div>
+            </form>
+            <iframe name="stop" style="display:none"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    function restart() {
+      console.log('restart');
+      $.post('/cgi-bin/device_reboot', function (data) {
+        alert('重启成功');
+      });
+    }
+
+    function recovery() {
+      console.log('recovery');
+      $.post('/cgi-bin/device_recovery', function (data) {
+        alert('恢复成功');
+      });
+    }
+    $(function () {
+    });
+  </script>
+</html>

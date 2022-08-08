@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="xidatong webnet" />
+    <meta name="author" content="gong" />
+    <!-- <link rel="icon" href="../../favicon.ico" /> -->
+
+    <title>xidatong web server set page</title>
+
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+      integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="./js/Chart.bundle.min.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+      integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu"
+      crossorigin="anonymous"
+    />
+
+    <!-- Custom styles for this template -->
+    <link href="./css/layout.css" rel="stylesheet" />
+
+    <style>
+      .mt_30 {
+        margin-top: 30px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button
+            type="button"
+            class="navbar-toggle collapsed"
+            data-toggle="collapse"
+            data-target="#navbar"
+            aria-expanded="false"
+            aria-controls="navbar"
+          >
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <img src="./logo/logo.png" height="50px" />
+        </div>
+        <!-- <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">账号</a></li>
+          </ul>
+        </div> -->
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li>
+              <a href="deviceinfo.asp">系统设置</a>
+            </li>
+            <li><a href="tcp.html">网络设置</a></li>
+            <li class="active"><a href="chart.html">数据显示</a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header">数据显示</h1>
+          <div class="col-sm-12">
+            <canvas id="myChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var ctx = $('#myChart');
+    var myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: '',
+            data: [],
+            borderColor: ['rgba(255, 99, 132, 1)'],
+            fill: false,
+            borderWidth: 2,
+          },
+        ],
+      },
+      options: {
+        elements: {
+          line: {
+            tension: 0, // 禁用贝塞尔曲线
+          },
+        },
+        scales: {
+          xAxes: [
+            {
+              type: 'time',
+              time: {
+                unit: 'minute',
+              },
+              scaleLabel: {
+                display: true,
+                labelString: '',
+              },
+            },
+          ],
+        },
+      },
+    });
+    function getData() {
+      $.get(
+        '/cgi-bin/datashow',
+        function (data) {
+          const { name, brand, unit, value } = data;
+          myChart.data.datasets[0].label = name + '(' + unit + ')';
+          if (value) {
+            myChart.data.datasets[0].data.push({
+              x: Date.now(),
+              y: value,
+            });
+          }
+          myChart.options.scales.xAxes[0].scaleLabel.labelString = brand;
+          myChart.update();
+        },
+        'json'
+      );
+    }
+    $(function () {
+      getData();
+      setInterval(getData, 5000);
+    });
+  </script>
+</html>

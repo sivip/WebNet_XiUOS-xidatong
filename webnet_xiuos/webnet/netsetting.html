@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <title>xidatong web server set page </title>
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+
+  <body>
+    <h1>网络设置<h1>
+    <br/><br/>
+    <br/><br/>
+    <br/><br/>
+    <div class="card-body main-card" >
+      <div class="card-title">MQTT代理服务器设置</div>
+      <form>
+          <div class="row">
+              <div class="form-group col-md-6">
+                <label for="publish-topic">发布主题</label>
+                <input type="text" class="form-control" id="publish-topic" required >
+              </div>
+              <div class="form-group col-md-6">
+                  <label for="server-addr">服务器地址</label>
+                  <input type="text" class="form-control" id="server-addr" required >
+              </div>
+              <div class="form-group col-md-6">
+                  <label for="port">端口号</label>
+                  <input type="text" class="form-control" id="server-port" required >
+              </div>
+          </div>
+          <div class="row">
+              <div class="form-group col-md-6">
+                  <label for="username">用户名</label>
+                  <input type="text" class="form-control" id="username" required >
+              </div>
+              <div class="form-group col-md-6">
+                  <label for="password">密码</label>
+                  <input type="password" class="form-control" id="password" required >
+              </div>
+          </div>
+          <div class="row">
+              <div class="form-group col-md-6">
+                  <label for="receiver">客户端id</label>
+                  <input type="text" class="form-control" id="clientID" required >
+              </div>
+          </div>
+          <button type="button" id="btnSaveSmtp" class="btn btn-outline-secondary btn-md btn-block"
+              onclick="saveMQTT()" >保存配置</button>
+
+      </form>
+  </div>
+  </body>
+</html>
+
+
+
+<script>
+  function saveMQTT() {
+    var pubtopicDiv = document.getElementById('publish-topic');
+    var serverAddrDiv = document.getElementById('server-addr');
+    var serverPortDiv = document.getElementById('server-port');
+    var usernameDiv = document.getElementById('username');
+    var passwordDiv = document.getElementById('password');
+    var clientIDDiv = document.getElementById('clientID');
+    if (serverAddrDiv.value == "" ||
+        serverPortDiv.value == "" ||
+        usernameDiv.value == "" ||
+        passwordDiv.value == "" ||
+        clientIDDiv.value == "" ||
+        pubtopicDiv.value == "") {
+        alert("设置项不能有空！");
+    } else {
+        $.ajax({
+            url: "/cgi-bin/mqtt_save",
+            type: "POST",
+            data: {
+                pub_topic: pubtopicDiv.value,
+                server_addr: serverAddrDiv.value,
+                server_port: serverPortDiv.value,
+                username: usernameDiv.value,
+                password: passwordDiv.value,
+                clientID: clientIDDiv.value,
+            },
+            dataType: "json",
+            success: function (data) {
+                alert('保存成功！');
+            }
+        });
+    }
+  }
+
+  function getMQTT(){ 
+    var pubtopicDiv = document.getElementById('publish-topic');
+    var serverAddrDiv = document.getElementById('server-addr');
+    var serverPortDiv = document.getElementById('server-port');
+    var usernameDiv = document.getElementById('username');
+    var passwordDiv = document.getElementById('password');
+    var clientIDDiv = document.getElementById('clientID');
+
+    $.ajax({
+            url: "/cgi-bin/mqtt_get",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                pubtopicDiv.value = data.pub_topic
+                serverAddrDiv.value = data.server_addr;
+                serverPortDiv.value = data.server_port;
+                usernameDiv.value = data.username;
+                passwordDiv.value = data.password;
+                clientIDDiv.value = data.clientID;
+                }
+        });
+  }
+
+
+  window.onload = function () {
+    getMQTT();
+    }
+</script>
